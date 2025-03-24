@@ -4,8 +4,6 @@ import { OrgImageService } from './../orgImage/orgImage.service';
 import { ORG_NOT_EXIST, ORG_FAIL, ORG_DEL_FAIL } from './../../common/constants/code';
 import { Result } from '@/common/dto/result.type';
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '@/common/guards/auth.guard';
 import { SUCCESS } from '@/common/constants/code';
 import { OrganizationResult, OrganizationResults } from './dto/result-organization.output';
 import { OrganizationInput } from './dto/organization.input';
@@ -15,7 +13,6 @@ import { CurUserId } from '@/common/decorators/current-user.decorator';
 import { PageInput } from '@/common/dto/page.input';
 
 @Resolver(() => OrganizationType)
-@UseGuards(GqlAuthGuard)
 export class OrganizationResolver {
   constructor(
     private readonly organizationService: OrganizationService,
@@ -35,6 +32,21 @@ export class OrganizationResolver {
     return {
       code: ORG_NOT_EXIST,
       message: '门店信息不存在',
+    };
+  }
+
+  @Mutation(() => OrganizationResult)
+  async createOrganization(@Args('params') params: OrganizationInput): Promise<Result> {
+    const res = await this.organizationService.create(params);
+    if (res) {
+      return {
+        code: SUCCESS,
+        message: '创建成功',
+      };
+    }
+    return {
+      code: ORG_FAIL,
+      message: '操作失败',
     };
   }
 

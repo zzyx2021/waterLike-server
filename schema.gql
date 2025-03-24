@@ -162,6 +162,78 @@ type OrganizationResults {
   page: Page
 }
 
+type OrderTimeType {
+  """开始时间"""
+  startTime: String!
+
+  """结束时间"""
+  endTime: String!
+
+  """key"""
+  key: Float!
+}
+
+type ReducibleTimeType {
+  """日期"""
+  week: String!
+
+  """可约时间 json"""
+  orderTime: [OrderTimeType!]!
+}
+
+type CourseType {
+  id: String!
+  createdAt: DateTime!
+  createdBy: String
+  updatedAt: DateTime
+  updatedBy: String
+  deletedAt: DateTime
+  deletedBy: String
+
+  """课程名称"""
+  name: String!
+
+  """课程描述"""
+  desc: String
+
+  """适宜人群"""
+  group: String!
+
+  """适合基础"""
+  baseAbility: String!
+
+  """限制上课人数"""
+  limitNumber: Float!
+
+  """持续时间"""
+  duration: Float!
+
+  """预约信息"""
+  reserveInfo: String
+
+  """退款信息"""
+  refundInfo: String
+
+  """其他说明信息"""
+  otherInfo: String
+
+  """可约时间"""
+  reducibleTime: [ReducibleTimeType!]
+}
+
+type CourseResult {
+  code: Int!
+  message: String!
+  data: CourseType
+}
+
+type CourseResults {
+  code: Int!
+  message: String!
+  data: [CourseType!]
+  page: Page
+}
+
 type Query {
   """使用ID查询用户"""
   Find(id: String!): UserType!
@@ -181,6 +253,8 @@ type Query {
   getStudents(page: PageInput!): StudentResults!
   getOrganizationInfo(id: String!): OrganizationResult!
   getOrganizations(page: PageInput!, name: String): OrganizationResults!
+  getCourseInfo(id: String!): CourseResult!
+  getCourses(page: PageInput!, name: String): CourseResults!
 }
 
 input UserInput {
@@ -210,8 +284,11 @@ type Mutation {
   """新增用户"""
   studentRegister(params: CreateStudent!): Boolean!
   commitStudentInfo(params: StudentInput!): StudentResult!
+  createOrganization(params: OrganizationInput!): OrganizationResult!
   commitOrganization(params: OrganizationInput!, id: String): OrganizationResult!
   deleteOrganization(id: String!): Result!
+  commitCourseInfo(params: PartialCourseInput!, id: String): CourseResult!
+  deleteCourse(id: String!): Result!
 }
 
 input CreateStudent {
@@ -278,4 +355,55 @@ input OrgImageInput {
   id: String
   url: String!
   remark: String
+}
+
+input PartialCourseInput {
+  """课程名称"""
+  name: String
+
+  """课程描述"""
+  desc: String
+
+  """适宜人群"""
+  group: String
+
+  """适合基础"""
+  baseAbility: String
+
+  """限制上课人数"""
+  limitNumber: Float
+
+  """持续时间"""
+  duration: Float
+
+  """预约信息"""
+  reserveInfo: String
+
+  """退款信息"""
+  refundInfo: String
+
+  """其他说明信息"""
+  otherInfo: String
+
+  """可约时间"""
+  reducibleTime: [ReducibleTime!]
+}
+
+input ReducibleTime {
+  """日期"""
+  week: String!
+
+  """可约时间 json"""
+  orderTime: [OrderTime!]!
+}
+
+input OrderTime {
+  """开始时间"""
+  startTime: String!
+
+  """结束时间"""
+  endTime: String!
+
+  """key"""
+  key: Float!
 }
